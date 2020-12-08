@@ -1,10 +1,10 @@
 import java.util.Scanner;
-
-
 public class Main {
-
     public static void main(String[] args) {
-        if (args.length<3){
+        double usersWins=0,compWins=0;
+        int len=args.length,choice;
+        Scanner in=new Scanner(System.in);
+        if (len<3){
             System.err.println("Not enough arguments passed");
             System.exit(-1);
         }
@@ -14,14 +14,62 @@ public class Main {
                 System.exit(-1);
             }
         }
-
-        for (int i=0;i<args.length;i++){
+        for (int i=0;i<len;i++){
             menu();
+            choice=in.nextInt();
+            while(choice<0 && choice>6) choice=in.nextInt();
+            if(choice==0){
+                len-=(len-i);
+                break;
+            }
+            int resultRound=round(choice,i,args);
+            if(resultRound==1){
+                usersWins++;
+                System.out.println("Your win");
+            }
+            if(resultRound==-1){
+                compWins++;
+                System.out.println("Your lose");
+            }
         }
+        result(usersWins,compWins,len);
     }
 
-
-
+    public static int round(int choice, int i,String [] args){
+        switch (choice){
+            case 1:
+                if(args[i].equals("SPOCK") ||args[i].equals("PAPER"))
+                    return -1;
+                if(args[i].equals("LIZARD") ||args[i].equals("SCISSORS"))
+                    return 1;
+                    break;
+            case 2:
+                if(args[i].equals("SCISSORS") ||args[i].equals("LIZARD"))
+                    return -1;
+                if(args[i].equals("SPOCK") ||args[i].equals("ROCK"))
+                    return 1;
+                break;
+            case 3:
+                if(args[i].equals("SPOCK") ||args[i].equals("ROCK"))
+                    return -1;
+                if(args[i].equals("PAPER") ||args[i].equals("LIZARD"))
+                    return 1;
+                break;
+            case 4:
+                if(args[i].equals("SCISSORS") ||args[i].equals("ROCK"))
+                    return -1;
+                if(args[i].equals("SPOCK") ||args[i].equals("PAPER"))
+                    return 1;
+                break;
+            case 5:
+                if(args[i].equals("SCISSORS") ||args[i].equals("ROCK"))
+                    return -1;
+                if(args[i].equals("LIZARD") ||args[i].equals("PAPER"))
+                    return 1;
+                break;
+        }
+        return 0;
+    }
     public static void menu(){
         System.out.println("Available moves:");
         System.out.println("1 - rock");
@@ -32,7 +80,7 @@ public class Main {
         System.out.println("0 - exit");
         System.out.println("Enter your move:");
     }
-    public static void result(int num, int len){
+    public static void result(double users,double comp, int len){
         System.out.print("+");
         printDashes(68);
         System.out.println("+");
@@ -51,8 +99,7 @@ public class Main {
         printDashes(18);
         System.out.println("|");
 
-        System.out.printf("|  num  |  len-num  |  len  |  %12d  |  %13.2f%%  |\n",
-                wins, losses, ties, numberOfGames, percentageWon * 100);
+        System.out.println("|    "+ users +"   |    "+ comp +"      |  "+ (len-comp-users) +"    |     "+ len +"      |  "+ (users/len*100) +"%            |\n");
 
         System.out.print("+");
         printDashes(68);
