@@ -1,3 +1,8 @@
+import org.apache.commons.codec.binary.Base64;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
@@ -5,13 +10,37 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Random random =new Random();
+        SecureRandom srandom= new SecureRandom();
         Scanner in = new Scanner(System.in);
         double usersWins = 0, compWins = 0;
-        int len = args.length, uChoice,cChoice;
-
+        int len = args.length, uChoice;
+        int cChoice;
+        Mac sha256_HMAC = null;
+        SecretKeySpec secret_key;
+        byte key[] = new byte[128];
+        srandom.nextBytes(key);
+        try {
+            sha256_HMAC = Mac.getInstance("HmacSHA256");
+            secret_key = new SecretKeySpec(key, "HmacSHA256");
+            sha256_HMAC.init(secret_key);
+        }
+        catch (Exception e){
+            System.err.println("Error");
+        }
+        
         checkСondition(args);
         do {
-            cChoice=random.nextInt();
+            cChoice=random.nextInt(len)+1;
+            try{
+                srandom.nextBytes(key);
+                secret_key = new SecretKeySpec(key, "HmacSHA256");
+                sha256_HMAC.init(secret_key);
+                System.out.println(cChoice);
+                System.out.println("HMAC:"+Base64.encodeBase64String(sha256_HMAC.doFinal(Integer.toString(cChoice).getBytes())));
+            }
+            catch (Exception e){
+                System.err.println("Error");
+            }
             do {
                 menu(args);
                 uChoice = in.nextInt();
@@ -33,7 +62,9 @@ public class Main {
                     System.out.println("TIE");
                 }
             }
+            System.out.println("HMAC key:"+key);
         } while (uChoice != 0);
+
         result(usersWins, compWins, len);
     }
 
