@@ -14,15 +14,12 @@ public class Main {
         Scanner in = new Scanner(System.in);
         double usersWins = 0, compWins = 0;
         int len = args.length, uChoice;
-        int cChoice;
+        int cChoice,round=0;
         Mac sha256_HMAC = null;
-        SecretKeySpec secret_key;
-        byte key[] = new byte[128];
-        srandom.nextBytes(key);
+        SecretKeySpec secret_key=null;
+
         try {
             sha256_HMAC = Mac.getInstance("HmacSHA256");
-            secret_key = new SecretKeySpec(key, "HmacSHA256");
-            sha256_HMAC.init(secret_key);
         }
         catch (Exception e){
             System.err.println("Error");
@@ -30,12 +27,12 @@ public class Main {
         
         checkСondition(args);
         do {
+            byte key[] = new byte[128];
+            srandom.nextBytes(key);
             cChoice=random.nextInt(len)+1;
             try{
-                srandom.nextBytes(key);
                 secret_key = new SecretKeySpec(key, "HmacSHA256");
                 sha256_HMAC.init(secret_key);
-                System.out.println(cChoice);
                 System.out.println("HMAC:"+Base64.encodeBase64String(sha256_HMAC.doFinal(Integer.toString(cChoice).getBytes())));
             }
             catch (Exception e){
@@ -46,7 +43,8 @@ public class Main {
                 uChoice = in.nextInt();
             } while (uChoice < 0 || uChoice > len);
 
-            if(cChoice!=0) {
+            if(uChoice!=0) {
+                round++;
                 System.out.println("You chose - "+args[uChoice-1]);
                 System.out.println("Computer chose - "+args[cChoice-1]);
                 int resultRound = round(uChoice-1, cChoice-1);
@@ -62,10 +60,10 @@ public class Main {
                     System.out.println("TIE");
                 }
             }
-            System.out.println("HMAC key:"+key);
+            System.out.println("HMAC key: "+key);
         } while (uChoice != 0);
 
-        result(usersWins, compWins, len);
+        result(usersWins, compWins, round);
     }
 
     public static void checkСondition(String[] args) {
