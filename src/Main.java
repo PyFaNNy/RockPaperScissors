@@ -22,7 +22,7 @@ public class Main {
             e.printStackTrace();
         }
 
-        keyGen.init(srandom);
+        keyGen.init(128,srandom);
         Key key = keyGen.generateKey();
         try {
             mac.init(key);
