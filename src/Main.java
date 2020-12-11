@@ -1,3 +1,5 @@
+import org.apache.commons.codec.binary.Hex;
+
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 import java.security.InvalidKeyException;
@@ -7,7 +9,6 @@ import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
-
 public class Main {
     public static void main(String[] args) {
         Random random = new Random();
@@ -37,7 +38,7 @@ public class Main {
         checkСondition(args);
         do {
             cChoice = random.nextInt(len) + 1;
-            System.out.println("HMAC: "+new String(mac.doFinal(Integer.toString(cChoice).getBytes())));
+            System.out.println("HMAC: "+ Hex.encodeHexString(mac.doFinal(Integer.toString(cChoice).getBytes())));
             do {
                 menu(args);
                 uChoice = in.nextInt();
@@ -59,7 +60,7 @@ public class Main {
                 if (resultRound == 0) {
                     System.out.println("TIE");
                 }
-                System.out.println("HMAC key: "+key);
+                System.out.println("HMAC key: "+Hex.encodeHexString(key.getEncoded()));
             }
         } while (uChoice != 0);
 
